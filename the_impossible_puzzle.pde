@@ -19,11 +19,19 @@ void draw() {
   displayPuzzle();
 
   // Check if the puzzle is solved
-  if (checkWin() && !won) {
+  if (won) {
     won = true;
     displayWinScreen();
   }
 }
+
+void displayWinScreen() {
+  background(255);  // Clear the background
+  textSize(32);
+  fill(0, 102, 153);
+  text("You Win!", width/2 - 50, height/2);
+}
+
 
 void mousePressed() {
   if (!won) {
@@ -32,6 +40,7 @@ void mousePressed() {
     int clickedCol = mouseX / tileSize;
 
     movePiece(clickedRow, clickedCol);
+    if (checkWin()) won = true;
   }
 }
 
@@ -155,12 +164,4 @@ boolean checkWin() {
   }
 
   return true;
-}
-
-void displayWinScreen() {
-  // Display the "You Won" screen
-  fill(0);
-  textSize(48);
-  textAlign(CENTER, CENTER);
-  text("You Won!", width / 2, height / 2);
 }
