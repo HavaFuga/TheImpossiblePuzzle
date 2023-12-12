@@ -79,6 +79,7 @@ void startLevel(int level) {
       break;
     case 2:
       gridSize = 4;
+      isColored = true;
       break;
     case 3:
       gridSize = 4;
@@ -161,14 +162,19 @@ void displayPuzzle() {
         
         if (isColored) {
           // Map value to a position between 0 and 1
-          float normalizedValue = map(value, 1, gridSize * gridSize, 0, 1);
+          float normalizedValue = map(value, 1, gridSize * gridSize-1, 0, 1);
   
           // Use lerpColor to interpolate between yellow, red, and blue
-          if (normalizedValue < 0.5) {
-            pieceColor = lerpColor(color(255, 255, 0), color(255, 0, 0), map(normalizedValue, 0, 0.5, 0, 1));
+          if (normalizedValue < 0.25) {
+            pieceColor = lerpColor(color(255, 0, 0), color(255, 165, 0), map(normalizedValue, 0, 0.25, 0, 1));
+          } else if (normalizedValue < 0.5) {
+            pieceColor = lerpColor(color(255, 165, 0), color(255, 255, 0), map(normalizedValue, 0.25, 0.5, 0, 1));
+          } else if (normalizedValue < 0.75) {
+            pieceColor = lerpColor(color(255, 255, 0), color(0, 255, 0), map(normalizedValue, 0.5, 0.75, 0, 1));
           } else {
-            pieceColor = lerpColor(color(255, 0, 0), color(0, 0, 255), map(normalizedValue, 0.5, 1, 0, 1));
+            pieceColor = lerpColor(color(0, 255, 0), color(0, 0, 255), map(normalizedValue, 0.75, 1, 0, 1));
           }
+
         }
 
 
