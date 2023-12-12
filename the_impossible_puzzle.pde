@@ -1,10 +1,13 @@
 int[][] puzzle;
 int gridSize = 3;
 int tileSize;
+boolean hasNumber = true;
+boolean isColored = false;
 boolean won = false;
 boolean wonAllLevels = false;
 int maxLevels = 5;
 int currentLevel = 1;
+
 
 void setup() {
   size(600, 600);
@@ -35,13 +38,11 @@ void displayWinScreen() {
       fill(0);
       text("You are the best <3", width / 2 - 150, height / 2);
   } else {
-    background(255);  // clear the background otherwise will be overwritten
     textSize(32);
     fill(0, 102, 153);
     text("You Win!", width/2 - 50, height/2);
   
     // "next lvl" button
-    fill(255, 0, 0);
     rect(width / 2 - 75, height / 2 + 50, 150, 50);
     fill(255);
     textSize(20);
@@ -74,19 +75,21 @@ println(currentLevel);
 void startLevel(int level) {
   switch (level) {
     case 1:
-      gridSize = 2;
+      gridSize = 3;
       break;
     case 2:
-      gridSize = 3;
+      gridSize = 4;
       break;
     case 3:
       gridSize = 4;
+      isColored = true;
+      hasNumber = false;
       break;
     case 4:
       gridSize = 4;
       break;
     case 5:
-      gridSize = 5;
+      gridSize = 4;
       break;
     default:
       // unexpected level TO-DO
@@ -153,12 +156,31 @@ void displayPuzzle() {
     for (int j = 0; j < gridSize; j++) {
       int value = puzzle[i][j];
       if (value != 0) {
-        fill(200);
+        
+        color pieceColor = color(200);
+        
+        if (isColored) {
+          // Map value to a position between 0 and 1
+          float normalizedValue = map(value, 1, gridSize * gridSize, 0, 1);
+  
+          // Use lerpColor to interpolate between yellow, red, and blue
+          if (normalizedValue < 0.5) {
+            pieceColor = lerpColor(color(255, 255, 0), color(255, 0, 0), map(normalizedValue, 0, 0.5, 0, 1));
+          } else {
+            pieceColor = lerpColor(color(255, 0, 0), color(0, 0, 255), map(normalizedValue, 0.5, 1, 0, 1));
+          }
+        }
+
+
+        fill(pieceColor);
         rect(j * tileSize, i * tileSize, tileSize, tileSize);
-        fill(0);
-        textSize(32);
-        textAlign(CENTER, CENTER);
-        text(value, j * tileSize + tileSize / 2, i * tileSize + tileSize / 2);
+        
+        if (hasNumber) {
+          fill(0);
+          textSize(32);
+          textAlign(CENTER, CENTER);
+          text(value, j * tileSize + tileSize / 2, i * tileSize + tileSize / 2);
+        }
       }
     }
   }
