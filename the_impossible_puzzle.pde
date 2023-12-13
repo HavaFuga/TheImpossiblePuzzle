@@ -3,15 +3,19 @@ int gridSize = 3;
 int tileSize;
 boolean hasNumber = true;
 boolean isColored = false;
+boolean isHelpActive = false;
+boolean giveUp = false;
 String puzzleColor = "rainbow";
 boolean won = false;
 boolean wonAllLevels = false;
 int maxLevels = 5;
 int currentLevel = 1;
+int time;
+int timeHelp = 30000;
 
 
 void setup() {
-  size(600, 600);
+  size(600, 700);
   tileSize = width / gridSize;
 
   startLevel(currentLevel);
@@ -20,7 +24,8 @@ void setup() {
 void draw() {
   background(255);
 
-  displayPuzzle();
+  displayPuzzle();      
+  drawMenu();
 
   // check if the puzzle is solved
   if (won) {
@@ -28,6 +33,20 @@ void draw() {
   } 
   if (wonAllLevels) {
     displayWinScreen();
+  }
+  if (isHelpActive) {
+    int passedTime = millis() - time;
+    fill(240);
+    rect(150, 225,300, 150);
+    textSize(32);
+    
+    fill(100);
+    if (passedTime > timeHelp) {
+       text("Press H or C", 260 , 285);
+    } else {
+       text("Try harder", 300 , 300);
+    }
+
   }
 }
 
@@ -53,25 +72,31 @@ void displayWinScreen() {
       textSize(32);
       fill(0);
       text("You are the best <3", width / 2 - 150, height / 2);
+      textSize(20);
+      text("You are the best <3", width / 2 - 150, height / 2);
   } else {
     
-    fill(200);
-    rect(width/2, height/2,50,50) ;
-    textSize(32);
+    fill(230, 242, 255);
+    noStroke();
+    rect(width/2 - 125, height/2-40,250,80) ;
+    textSize(50);
     fill(0, 102, 153);
     text("Good Job!", width/2, height/2);
   
     // "next lvl" button
-    rect(width / 2 - 75, height / 2 + 50, 150, 50);
+    fill(200, 102, 153);
+    rect(width / 2 - 70 , height / 2 + 60, 150, 50);
     fill(255);
     textSize(20);
-    text("Next Level", width / 2 - 50, height / 2 + 85);
+    text("Next Level", width / 2, height / 2 + 85);
   }
 }
 
 void mousePressed() {
+  clickMenu();
+  
   // check if "next lvl" button is pressed
-  if (won && mouseX > width / 2 - 75 && mouseX < width / 2 + 75 && mouseY > height / 2 + 50 && mouseY < height / 2 + 100) {
+  if (won && mouseX > width / 2 - 70 && mouseX < width / 2 + 150 && mouseY > height / 2 + 50 && mouseY < height / 2 + 100) {
     won = false;
     hasNumber = false;
     currentLevel++;
@@ -82,6 +107,7 @@ void mousePressed() {
       startLevel(currentLevel);
     }
   } else {
+    if ( mouseX > 600) return;
     // move clicked puzzle piece
     int clickedRow = mouseY / tileSize;
     int clickedCol = mouseX / tileSize;
@@ -125,7 +151,7 @@ void startLevel(int level) {
 
   // init puzzle
   initPuzzle();
-  shufflePuzzle(100); 
+  shufflePuzzle(50); 
 }
 
 void initPuzzle() {
@@ -207,31 +233,73 @@ void displayPuzzle() {
       }
     }
   }
-  
-  
+     
+    switch (puzzleColor) {         
+      case "protanopia":  
+        applyProtanopiaFilter();
+        break;
+      
+      case "deutranopia":
+        applyDeuteranopiaFilter();
+        break;
+      
+      case "tritanopia":
+        applyTritanopiaFilter();
+        break;      
         
-        switch (puzzleColor) {         
-          case "protanopia":  
-            applyProtanopiaFilter();
-            break;
-          
-          case "deutranopia":
-            applyDeuteranopiaFilter();
-            break;
-          
-          case "tritanopia":
-            applyTritanopiaFilter();
-            break;      
-            
-          case "gray":
-            applyGrayFilter();
-            break;
-            
-          default:
-            break;
+      case "gray":
+        applyGrayFilter();
+        break;
+        
+      default:
+        break;
 
-        }
+    }
 }
+
+void clickMenu() {
+  if (mouseX > 50 && mouseX < 150 && mouseY > 620 && mouseY < 670 ||
+  mouseX > 460 && mouseX < 560 && mouseY > 625 && mouseY < 675 
+  ) {
+    isHelpActive = !isHelpActive;
+  }
+}
+
+void drawMenu() {
+  fill(220);
+  noStroke();
+  rect(0, 600, 600, 100);
+  
+  // Timer
+  // Calculate how much time has passed
+  int passedTime = millis() - time;
+  // Has five seconds passed?
+  if (passedTime > timeHelp) {
+    // "next lvl" button
+    rect(50 , 620, 150, 50);
+    fill(255);
+    textSize(20);
+    text("Help", 50, 620);
+  }
+
+  // "help" button
+  fill(200);
+  rect(50 , 625, 100, 50);
+  fill(255);
+  textSize(20);
+  text("Help", 100, 650);
+
+
+  // "give Up" button
+  fill(200);
+  rect(460 , 625, 100, 50);
+  fill(255);
+  textSize(20);
+  text("Give Up", 510, 650);
+  
+  
+}
+
 
 // applyProtanopiaFilter();
 void applyProtanopiaFilter() {
