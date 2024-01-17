@@ -11,7 +11,8 @@ boolean wonAllLevels = false;
 int maxLevels = 5;
 int currentLevel = 1;
 int time;
-int timeHelp = 30000;
+int startTime;
+int timeHelp = 50000;
 
 
 void setup() {
@@ -36,6 +37,9 @@ void draw() {
   }
   if (isHelpActive) {
     int passedTime = millis() - time;
+    if (millis() - startTime >= 2500) {
+      isHelpActive = !isHelpActive;
+    }
     fill(240);
     rect(150, 225,300, 150);
     textSize(32);
@@ -68,12 +72,10 @@ void keyPressed() {
 void displayWinScreen() {
   if (wonAllLevels) {
     // final screen
-      background(255, 182, 193); 
+      background(200, 102, 153); 
       textSize(32);
       fill(0);
-      text("You are the best <3", width / 2 - 150, height / 2);
-      textSize(20);
-      text("You are the best <3", width / 2 - 150, height / 2);
+      text("Good Job! <3", width / 2 - 150, height / 2);
   } else {
     
     fill(230, 242, 255);
@@ -145,13 +147,14 @@ void setLevel(int level) {
 }
 
 void startLevel(int level) {
+  time = millis();
   setLevel(level);
 
   tileSize = width / gridSize;
 
   // init puzzle
   initPuzzle();
-  shufflePuzzle(50); 
+  shufflePuzzle(2); 
 }
 
 void initPuzzle() {
@@ -258,9 +261,12 @@ void displayPuzzle() {
 }
 
 void clickMenu() {
-  if (mouseX > 50 && mouseX < 150 && mouseY > 620 && mouseY < 670 ||
+  int passedTime = millis() - time;
+  if ((mouseX > 50 && mouseX < 150 && mouseY > 620 && mouseY < 670 && passedTime > timeHelp) ||
   mouseX > 460 && mouseX < 560 && mouseY > 625 && mouseY < 675 
   ) {
+    
+    startTime = millis();
     isHelpActive = !isHelpActive;
   }
 }
@@ -275,19 +281,15 @@ void drawMenu() {
   int passedTime = millis() - time;
   // Has five seconds passed?
   if (passedTime > timeHelp) {
-    // "next lvl" button
-    rect(50 , 620, 150, 50);
-    fill(255);
-    textSize(20);
-    text("Help", 50, 620);
+      // "help" button
+      fill(200);
+      rect(50 , 625, 100, 50);
+      fill(255);
+      textSize(20);
+      text("Help", 100, 650);
   }
 
-  // "help" button
-  fill(200);
-  rect(50 , 625, 100, 50);
-  fill(255);
-  textSize(20);
-  text("Help", 100, 650);
+
 
 
   // "give Up" button
