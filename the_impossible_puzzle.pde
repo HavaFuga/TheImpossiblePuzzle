@@ -154,7 +154,7 @@ void startLevel(int level) {
 
   // init puzzle
   initPuzzle();
-  shufflePuzzle(2); 
+  shufflePuzzle(100); 
 }
 
 void initPuzzle() {
